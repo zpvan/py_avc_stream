@@ -1,6 +1,7 @@
 import pyAvcStream
 import pyNalu
 import pySps
+import pyPps
 
 file_name = "1920x1080x60x1sec-startWithSps.264"
 
@@ -28,7 +29,11 @@ for nalu in nalus:
         gop.append(sps)
         sps.print_info()
     elif nalu.nalu_unit_type == pyNalu.dict_nalu_type["pps"]:
-        pass
+        nalu.print_info()
+        pps = pyPps.Pps(nalu.rbsp)
+        pps.parse()
+        gop.append(pps)
+        pps.print_info()
     elif nalu.nalu_unit_type == pyNalu.dict_nalu_type["sei"]:
         pass
     elif nalu.nalu_unit_type == pyNalu.dict_nalu_type["i_frame"]:

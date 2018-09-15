@@ -88,26 +88,6 @@ class Sps():
         self.dpb_output_delay_length_minus1 = 0
         self.time_offset_length = 0
 
-    def scaling_list(self, str_payload, scaling_list, size_of_scaling_list, use_default_scaling_matrix_flag):
-        last_scale = 8
-        next_scale = 8
-        j = 0
-        while j < size_of_scaling_list:
-            if next_scale != 0:
-                delta_scale = pyUtils.read_se(str_payload)
-                next_scale = math.floor((last_scale + delta_scale + 256) % 256)
-                use_default_scaling_matrix_flag = (j == 0 and next_scale == 0)
-            if next_scale == 0:
-                scaling_list[j] = last_scale
-            else:
-                scaling_list[j] = next_scale
-            last_scale = scaling_list[j]
-            j = j + 1
-
-    def rbsp_trailing_bits(self):
-        print("no implement rbsp_trailing_bits() yet")
-        pass
-
     def hrd_parameters(self, str_payload):
         self.cpb_cnt_minus1 = pyUtils.read_ue(str_payload)
         self.bit_rate_scale = pyUtils.read_bits(str_payload, 4)
@@ -199,11 +179,10 @@ class Sps():
                 while i < 8:
                     self.seq_scaling_list_present_flag[i] = pyUtils.read_bits(str_payload, 1)
                     if self.seq_scaling_list_present_flag[i] == 1:
-                        print("find seq_scaling_list_present_flag i = " + str(i))
                         if i < 6:
-                            self.scaling_list(str_payload, self.scaling_list_4x4[i], 16, self.use_default_scaling_matrix_4x4_flag[i])
+                            pyUtils.scaling_list(str_payload, self.scaling_list_4x4[i], 16, self.use_default_scaling_matrix_4x4_flag[i])
                         else:
-                            self.scaling_list(str_payload, self.scaling_list_8x8[i - 6], 64,use_default_scaling_matrix_8x8_flag[i - 6])
+                            pyUtils.scaling_list(str_payload, self.scaling_list_8x8[i - 6], 64,use_default_scaling_matrix_8x8_flag[i - 6])
                     i = i + 1
             self.log2_max_frame_num_minus4 = pyUtils.read_ue(str_payload)
             self.pic_order_cnt_type = pyUtils.read_ue(str_payload)
@@ -234,10 +213,10 @@ class Sps():
             self.vui_parameters_present_flag = pyUtils.read_bits(str_payload, 1)
             if self.vui_parameters_present_flag == 1:
                 self.vui_parameters(str_payload)
-            self.rbsp_trailing_bits()
+            pyUtils.rbsp_trailing_bits(str_payload)
 
 
-        print("str_payload cur r_idx = " + str(str_payload.r_idx) + ", next bit = " + str(pyUtils.read_bits(str_payload, 1)))
+        # print("str_payload cur r_idx = " + str(str_payload.r_idx) + ", next bit = " + str(pyUtils.read_bits(str_payload, 1)))
 
         print("sps parse end")
 

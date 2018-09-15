@@ -22,9 +22,11 @@ gop = []
 
 for nalu in nalus:
     if nalu.nalu_unit_type == pyNalu.dict_nalu_type["sps"]:
+        nalu.print_info()
         sps = pySps.Sps(nalu.rbsp)
         sps.parse()
         gop.append(sps)
+        sps.print_info()
     elif nalu.nalu_unit_type == pyNalu.dict_nalu_type["pps"]:
         pass
     elif nalu.nalu_unit_type == pyNalu.dict_nalu_type["sei"]:

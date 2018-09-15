@@ -35,6 +35,6 @@ class Nalu():
         self.rbsp = body_part[0]
 
 
-
     def print_info(self):
         print("nalu info: ")
+        print("nalu unit hex = " + str(self.unit.hex()))

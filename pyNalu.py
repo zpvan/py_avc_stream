@@ -23,6 +23,7 @@ class Nalu():
 
     def parse(self):
         # parse header
+        self.nal_ref_idc = (self.header & 0x60) >> 4
         self.nalu_unit_type = self.header & 0x1f
 
         # parse body
@@ -37,4 +38,6 @@ class Nalu():
 
     def print_info(self):
         print("nalu info: ")
-        print("nalu unit hex = " + str(self.unit.hex()))
+        print("nal_ref_idc = " + str(self.nal_ref_idc))
+        print("nal_unit_type = " + str(self.nalu_unit_type))
+        # print("nalu unit hex = " + str(self.unit.hex()))

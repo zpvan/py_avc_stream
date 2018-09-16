@@ -2,6 +2,7 @@ import pyAvcStream
 import pyNalu
 import pySps
 import pyPps
+import pySlice
 
 file_name = "1920x1080x60x1sec-startWithSps.264"
 
@@ -19,25 +20,30 @@ for bytes_nalu in list_bytes_nalu:
     nalus.append(nalu)
 
 # 创建一个gop列表来存各种解析好了的数据
-gop = []
+gop = {}
 
 for nalu in nalus:
     if nalu.nalu_unit_type == pyNalu.dict_nalu_type["sps"]:
         nalu.print_info()
         sps = pySps.Sps(nalu.rbsp)
         sps.parse()
-        gop.append(sps)
+        gop["SPS"] = sps
         sps.print_info()
     elif nalu.nalu_unit_type == pyNalu.dict_nalu_type["pps"]:
         nalu.print_info()
         pps = pyPps.Pps(nalu.rbsp)
         pps.parse()
-        gop.append(pps)
+        gop["PPS"] = pps
         pps.print_info()
     elif nalu.nalu_unit_type == pyNalu.dict_nalu_type["sei"]:
         pass
     elif nalu.nalu_unit_type == pyNalu.dict_nalu_type["i_frame"]:
-        pass
+        print("i_frame nalu type = " + str(type(nalu.nalu_unit_type)))
+        nalu.print_info()
+        idr_slice = pySlice.Slice(nalu.rbsp, gop["SPS"], gop["PPS"], nalu.nalu_unit_type, nalu.nal_ref_idc)
+        idr_slice.parse()
+        gop["IDR"] = idr_slice
+        idr_slice.print_info()
     elif nalu.nalu_unit_type == pyNalu.dict_nalu_type["p_frame"]:
         pass
     else:

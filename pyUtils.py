@@ -59,8 +59,7 @@ def more_rbsp_data(payload):
 def scaling_list(str_payload, scaling_list, size_of_scaling_list, use_default_scaling_matrix_flag):
         last_scale = 8
         next_scale = 8
-        j = 0
-        while j < size_of_scaling_list:
+        for j in range(size_of_scaling_list):
             if next_scale != 0:
                 delta_scale = read_se(str_payload)
                 next_scale = math.floor((last_scale + delta_scale + 256) % 256)
@@ -70,7 +69,6 @@ def scaling_list(str_payload, scaling_list, size_of_scaling_list, use_default_sc
             else:
                 scaling_list[j] = next_scale
             last_scale = scaling_list[j]
-            j = j + 1
 
 def rbsp_trailing_bits(str_payload):
     last_payload = str_payload.binary[str_payload.r_idx:]

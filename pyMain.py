@@ -23,30 +23,30 @@ for bytes_nalu in list_bytes_nalu:
 gop = {}
 
 for nalu in nalus:
-    if nalu.nalu_unit_type == pyNalu.dict_nalu_type["sps"]:
+    if nalu.nal_unit_type == pyNalu.dict_nalu_type["sps"]:
         nalu.print_info()
         sps = pySps.Sps(nalu.rbsp)
         sps.parse()
         gop["SPS"] = sps
         sps.print_info()
-    elif nalu.nalu_unit_type == pyNalu.dict_nalu_type["pps"]:
+    elif nalu.nal_unit_type == pyNalu.dict_nalu_type["pps"]:
         nalu.print_info()
         pps = pyPps.Pps(nalu.rbsp)
         pps.parse()
         gop["PPS"] = pps
         pps.print_info()
-    elif nalu.nalu_unit_type == pyNalu.dict_nalu_type["sei"]:
+    elif nalu.nal_unit_type == pyNalu.dict_nalu_type["sei"]:
         pass
-    elif nalu.nalu_unit_type == pyNalu.dict_nalu_type["i_frame"]:
-        print("i_frame nalu type = " + str(type(nalu.nalu_unit_type)))
+    elif nalu.nal_unit_type == pyNalu.dict_nalu_type["i_frame"]:
+        print("i_frame nalu type = " + str(type(nalu.nal_unit_type)))
         nalu.print_info()
-        idr_slice = pySlice.Slice(nalu.rbsp, gop["SPS"], gop["PPS"], nalu.nalu_unit_type, nalu.nal_ref_idc)
+        idr_slice = pySlice.Slice(nalu.rbsp, gop["SPS"].dict_info, gop["PPS"].dict_info, nalu.dict_info)
         idr_slice.parse()
         gop["IDR"] = idr_slice
         idr_slice.print_info()
-    elif nalu.nalu_unit_type == pyNalu.dict_nalu_type["p_frame"]:
+    elif nalu.nal_unit_type == pyNalu.dict_nalu_type["p_frame"]:
         pass
     else:
-        print("unknown nalu type DEC = " + nalu.nalu_unit_type)
+        print("unknown nalu type DEC = " + nalu.nal_unit_type)
 
 print("gop count = " + str(len(gop)))

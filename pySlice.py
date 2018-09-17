@@ -3,18 +3,17 @@ import pySliceHeader
 
 class Slice():
 
-    def __init__(self, rbsp, sps, pps, nalu_type, nal_ref_idc):
+    def __init__(self, rbsp, sps_dict, pps_dict, nal_dict):
         self.rbsp = rbsp
         # print("slice hex = " + self.rbsp.hex())
-        self.sps = sps
-        self.pps = pps
-        self.nalu_type = nalu_type
-        self.nal_ref_idc = nal_ref_idc
+        self.active_sps = sps_dict
+        self.active_pps = pps_dict
+        self.nal_info = nal_dict
 
     def parse(self):
         print("slice parse begin")
 
-        self.header = pySliceHeader.SliceHeader(self.rbsp, self.sps, self.pps, self.nalu_type, self.nal_ref_idc)
+        self.header = pySliceHeader.SliceHeader(self.rbsp, self.active_sps, self.active_pps, self.nal_info)
         self.header.parse()
 
         print("slice parse end")

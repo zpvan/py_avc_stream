@@ -1,5 +1,5 @@
-
-
+import pprint
+from collections import OrderedDict
 # 264标准文档7章
 
 # nalu type
@@ -16,15 +16,22 @@ dict_nalu_type = {"sps" : 7, "pps" : 8, "sei" : 6, "i_frame" : 5, "p_frame" : 1}
 class Nalu():
 
     def __init__(self, unit):
+        self.dict_info = OrderedDict()
+        self.rbsp = b''
+
         self.unit = unit
         self.header = unit[0]
         self.body = unit[1:]
-        self.rbsp = b''
 
     def parse(self):
+        dict_info = self.dict_info
+
         # parse header
         self.nal_ref_idc = (self.header & 0x60) >> 4
-        self.nalu_unit_type = self.header & 0x1f
+        dict_info["nal_ref_idc"] = self.nal_ref_idc
+        self.nal_unit_type = self.header & 0x1f
+        dict_info["nal_unit_type"] = self.nal_unit_type
+
 
         # parse body
         body_part = self.body.partition(b'\x00\x00\x03')
@@ -38,6 +45,4 @@ class Nalu():
 
     def print_info(self):
         print("nalu info: ")
-        print("nal_ref_idc = " + str(self.nal_ref_idc))
-        print("nal_unit_type = " + str(self.nalu_unit_type))
-        # print("nalu unit hex = " + str(self.unit.hex()))
+        pprint.pprint(self.dict_info)
